@@ -1,5 +1,5 @@
 import requests
-from config import API_KEY, BASE_URL
+from config import BASE_URL, API_KEY
 
 
 class ConsultorClima:
@@ -8,47 +8,74 @@ class ConsultorClima:
         self.base_url = BASE_URL
 
     def buscar_clima(self, cidade):
-        """Busca informaçoes climaticas sobre uma cidade"""
+        """Busca informações climáticas para uma cidade"""
         params = {
             'q': cidade,
             'appid': self.api_key,
-            'units': 'metric', """temperatura em Celsius"""
-            'lang': 'pt_br' """descriçao do clima em portugues"""
+            'units': 'metric',  # Para temperatura em Celsius
+            'lang': 'pt_br'     # Para descrições em português
         }
 
         try:
             response = requests.get(self.base_url, params=params)
-            response.rise_for_status()
-            return response.jason()
+
+            # Debug: veja a resposta da API
+            print(f"Status Code: {response.status_code}")
+            print(f"Resposta: {response.text[:200]}...")
+
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            if response.status_code == 401:
+                print("❌ Erro de autenticação. Verifique sua API Key.")
+            elif response.status_code == 404:
+                print("❌ Cidade não encontrada.")
+            else:
+                print(f"❌ Erro HTTP: {e}")
+            return None
         except requests.exceptions.RequestException as e:
-            print(f"Erro ao buscar dados do clima: {e}")
+            print(f"❌ Erro na requisição: {e}")
             return None
 
     def formatar_dados(self, dados):
-        """formata os dados climaticos para exibiçao"""
-        if not dados or 'main' not in dados:
+        """Formata os dados climáticos para exibição com verificações de segurança"""
+        if not dados:
+            print("❌ Nenhum dado recebido da API")
             return None
 
-        temperatura = dados['main']['temp']
-        sensacao = dados['main']['feels_like']
-        umidade = dados['main']['humidity']
-        descricao = dados['weather'][0]['description'].tittle()
-        cidade = dados['name']
-        pais = dados['sys']['country']
+        # Verifica se a API retornou um erro
+        if 'cod' in dados and dados['cod'] != 200:
+            print(
+                f"❌ Erro da API: {dados.get('message', 'Erro desconhecido')}")
+            return None
 
-        return {
-            'cidade': cidade,
-            'pais': pais,
-            'temperatura': temperatura,
-            'sensacao': sensacao,
-            'umidade': umidade,
-            'descricao': descricao
-        }
+        # Verifica se todas as chaves necessárias existem
+        try:
+            temperatura = dados['main']['temp']
+            sensacao = dados['main']['feels_like']
+            humidade = dados['main']['humidity']
+            descricao = dados['weather'][0]['description'].title()
+            cidade = dados['name']
+            pais = dados['sys']['country']
+
+            return {
+                'cidade': cidade,
+                'pais': pais,
+                'temperatura': temperatura,
+                'sensacao': sensacao,
+                'humidade': humidade,
+                'descricao': descricao
+            }
+
+        except KeyError as e:
+            print(f"❌ Chave não encontrada nos dados: {e}")
+            print(f"📊 Dados recebidos: {dados}")
+            return None
 
     def exibir_clima(self, dados_formatados):
-        """exibe os dados formatados de forma amigavel"""
+        """Exibe os dados climáticos de forma amigável"""
         if not dados_formatados:
-            print("não foi possivel obter os dados climaticos")
+            print("❌ Não foi possível obter os dados climáticos.")
             return
 
         print("\n" + "="*50)

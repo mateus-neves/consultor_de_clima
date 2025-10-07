@@ -1,39 +1,51 @@
 from clima import ConsultorClima
 
+
 def main():
     consultor = ConsultorClima()
+
     print("🌤️  CONSULTOR DE CLIMA")
-    print("="*30)
+    print("=" * 30)
+
+    # Verifica se a API key está configurada
+    if not consultor.api_key or consultor.api_key == 'sua_chave_aqui':
+        print("❌ ERRO: API Key não configurada!")
+        print("👉 Obtenha uma chave gratuita em: https://openweathermap.org/api")
+        print("👉 Configure no arquivo config.py")
+        return
 
     while True:
-        print("\nOpçoes:")
-        print("1. Buscar clima por cidade")
-        print("2. Sair")
+        print("\nOpções:")
+        print("1 - Consultar clima por cidade")
+        print("2 - Sair")
 
-        opçao = input("\nEscolha uma opçao (1 ou 2): ").strip()
+        opcao = input("\nEscolha uma opção (1-2): ").strip()
 
-        if opçao == '1':
-            cidade = input("\nDijite o nome da cidede: ").strip()
+        if opcao == '1':
+            cidade = input("\nDigite o nome da cidade: ").strip()
 
             if cidade:
-                print(f"\nBuscando clima para {cidade}...")
+                print(f"\n🔍 Buscando clima para '{cidade}'...")
                 dados = consultor.buscar_clima(cidade)
 
                 if dados:
                     dados_formatados = consultor.formatar_dados(dados)
-                    consultor.exibir_clima(dados_formatados)
+                    if dados_formatados:
+                        consultor.exibir_clima(dados_formatados)
+                    else:
+                        print("❌ Não foi possível formatar os dados recebidos.")
                 else:
-                    print("cidade nao encontrado ou erro na consulta.")
-
+                    print("❌ Cidade não encontrada ou erro na consulta.")
             else:
-                print("Por favor, dijite um nome de cidade")
+                print("❌ Por favor, digite o nome de uma cidade.")
 
-        elif opçao == '2':
-            print("obrigado por usar o Consultor de Clima. Ate logo!")
+        elif opcao == '2':
+            print("👋 Obrigado por usar o Consultor de Clima!")
             break
+
         else:
-            print("Opçao invalida. Por favor, escolha 1 ou 2.")
+            print("❌ Opção inválida. Tente novamente.")
+
 
 if __name__ == "__main__":
     main()
-    
