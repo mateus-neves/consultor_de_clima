@@ -1,4 +1,4 @@
-from weather import ConsultorClima
+from clima import ConsultorClima
 
 
 def main():
