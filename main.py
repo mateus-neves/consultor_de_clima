@@ -1,11 +1,11 @@
-from clima import ConsultorClima
+from weather import ConsultorClima
 
 
 def main():
     consultor = ConsultorClima()
 
-    print("🌤️  CONSULTOR DE CLIMA")
-    print("=" * 30)
+    print("🌤️  CONSULTOR DE CLIMA AVANÇADO")
+    print("=" * 40)
 
     # Verifica se a API key está configurada
     if not consultor.api_key or consultor.api_key == 'sua_chave_aqui':
@@ -15,14 +15,15 @@ def main():
         return
 
     while True:
-        print("\nOpções:")
+        print("\n📋 Opções:")
         print("1 - Consultar clima por cidade")
-        print("2 - Sair")
+        print("2 - Ver histórico de consultas")
+        print("3 - Sair")
 
-        opcao = input("\nEscolha uma opção (1-2): ").strip()
+        opcao = input("\nEscolha uma opção (1-3): ").strip()
 
         if opcao == '1':
-            cidade = input("\nDigite o nome da cidade: ").strip()
+            cidade = input("\n🏙️  Digite o nome da cidade: ").strip()
 
             if cidade:
                 print(f"\n🔍 Buscando clima para '{cidade}'...")
@@ -40,7 +41,10 @@ def main():
                 print("❌ Por favor, digite o nome de uma cidade.")
 
         elif opcao == '2':
-            print("👋 Obrigado por usar o Consultor de Clima!")
+            consultor.exibir_historico()
+
+        elif opcao == '3':
+            print("\n👋 Obrigado por usar o Consultor de Clima! Até logo! 🌈")
             break
 
         else:
