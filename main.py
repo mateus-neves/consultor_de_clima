@@ -4,7 +4,7 @@ from clima import ConsultorClima
 def main():
     consultor = ConsultorClima()
 
-    print("🌤️  CONSULTOR DE CLIMA AVANÇADO")
+    print("🌤️  CONSULTOR DEe CLIMA AVANÇADO")
     print("=" * 40)
 
     # Verifica se a API key está configurada
